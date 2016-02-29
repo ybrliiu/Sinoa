@@ -5,7 +5,7 @@ use utf8;
 use Test::More;
 
 $ENV{MOJO_MODE} = 'test';
-$ENV{SINOA_DEPTH} = 2; # ディレクトリの深さ /t = 0,/t/sinoa = 1,/t/sinoa/model = 2
+$ENV{SINOA_DEPTH} = 0; # ディレクトリの深さ /t = 0,/t/sinoa = 1,/t/sinoa/model = 2
 
 BEGIN {
   use_ok('Sinoa');

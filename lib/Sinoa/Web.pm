@@ -19,10 +19,11 @@ package Sinoa::Web {
     # Router
     my $r = $self->routes;
     $r->namespaces([qw/Sinoa::Web::Controller/]);
-    $r->get('/')->to('root#index');
-    $r->get('/top')->to('root#index');
+    $r->get('/')->to('root#top');
+    $r->get('/top')->to('root#top');
     $r->get('/regist')->to('root#regist');
     $r->post('/create')->to('root#create');
+    $r->post('/remove')->to('root#remove');
   }
 
 }

@@ -14,10 +14,37 @@ BEGIN {
   use_ok($class);
 }
 
+my $obj;
+
 subtest 'new' => sub {
-  my $obj = $class->new();
+  $obj = $class->new();
   isa_ok($obj,$class);
   can_ok($obj,qw/create _now get_bookmark/);
+};
+
+subtest 'get_bookmark' => sub {
+  my ($bookmark,$page) = $obj->get_bookmark({no => 1,switch => 10});
+  is(ref $bookmark,'ARRAY');
+  is(ref $page,'HASH');
+};
+
+subtest 'create' => sub {
+  ok $obj->create([
+    'test',
+    'http://',
+    'none',
+    'test',
+  ]);
+  ok $obj->create([
+    'test2',
+    'http://',
+    'none',
+    'test',
+  ]);
+};
+
+subtest 'remove' => sub {
+  ok $obj->remove([qw/test test2/]);
 };
 
 done_testing;

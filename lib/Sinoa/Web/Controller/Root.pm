@@ -3,11 +3,11 @@ package Sinoa::Web::Controller::Root {
   use Mojo::Base 'Mojolicious::Controller';
   
   # トップページ
-  sub index {
+  sub top {
     my $self = shift;
     
     my $form = $self->param('page') // 1;
-    my ($bookmark,$page) = $self->model->bookmark->get_bookmark({page => $form,limit => 10});
+    my ($bookmark,$page) = $self->model->bookmark->get_bookmark({no => $form,switch => 10});
     $self->stash(bookmark => $bookmark,page => $page,);
     
     # Render template "root/index.html.ep" with message
@@ -17,7 +17,6 @@ package Sinoa::Web::Controller::Root {
   # ブックマーク登録
   sub regist {
     my $self = shift;
-    
     $self->render();
   }
   
@@ -44,7 +43,14 @@ package Sinoa::Web::Controller::Root {
       $self->param('Tag'),
     ]);
     
-    $self->redirect_to($self->req->url->base); # ('/') だと特定の環境やcgi起動の時にバグる
+    $self->redirect_to('/top');
+  }
+  
+  # ブックマーク削除
+  sub remove {
+    my $self = shift;
+    $self->model->bookmark->remove($self->every_param('key'));
+    $self->redirect_to('/top');
   }
 
 }

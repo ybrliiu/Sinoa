@@ -25,6 +25,13 @@ package Sinoa::Model::Bookmark {
     $self->{Record}->open(1)->add($bookmark->Name,$bookmark)->close();
   }
   
+  sub remove {
+    my ($self,$data) = @_;
+    my $obj = $self->{Record}->open(1);
+    $obj->delete($_) for @$data;
+    $obj->close();
+  }
+  
   sub _now {
     my $t = localtime();
     return $t->year.'/'.$t->mon.'/'.$t->mday.' '.$t->hour.':'.$t->min.':'.$t->sec;
@@ -32,12 +39,19 @@ package Sinoa::Model::Bookmark {
   
   sub get_bookmark {
     my ($self,$args) = @_;
-    my $page = $args->{page} // 1;
-    my $limit = $args->{limit} // 10;
-    my %bookmark = %{$self->{Record}->open->get_alldata()};
-    my @middle = map { $_ } sort(values %bookmark);
-    my @result = map { $middle[$_] ? $middle[$_] : () } ($page-1)*$limit..$page*$limit;
-    return \@result,$page;
+    my $bookmark = $self->{Record}->open;
+    my $sum = @{$bookmark->get_list()};
+    my %page = (
+      switch => $args->{switch} // 10,
+      current => $args->{no} - 1 // 0,
+      limit => int(@{$bookmark->get_list()} / $args->{switch} + 0.99), # 数が大きくなりすぎた時にバグる
+    );
+    my %hash = %{$bookmark->get_alldata()};
+    my @tmp = map { $hash{$_} } sort(keys %hash);
+    my @bookmark = map {
+      $tmp[$_] ? $tmp[$_] : ()
+    } $page{current} * $page{switch}..$page{current} * $page{switch} + $page{switch} - 1;
+    return \@bookmark,\%page;
   }
   
 }

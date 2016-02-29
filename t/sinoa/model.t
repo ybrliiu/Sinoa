@@ -17,7 +17,7 @@ BEGIN {
 subtest 'new' => sub {
   my $obj = $class->new();
   isa_ok($obj,$class);
-  can_ok($obj,qw/Bookmark/);
+  can_ok($obj,qw/bookmark/);
 };
 
 done_testing;
