@@ -30,6 +30,11 @@ package Sinoa::Model::Bookmark {
     my $t = localtime();
     return $t->year.'/'.$t->mon.'/'.$t->mday.' '.$t->hour.':'.$t->min.':'.$t->sec;
   }
+  
+  sub create_folder {
+    my ($self,$name) = @_;
+    $self->{Record}->open(1)->add($name,{})->close();
+  }
 
   sub remove {
     my ($self,$data) = @_;

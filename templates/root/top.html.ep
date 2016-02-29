@@ -1,5 +1,6 @@
-% layout 'default';
+% layout 'default',background => 'bg_0.jpg';
 % title 'Index';
+
 <h1>BOOKMARK LIST</h1>
 <form action="<%= url_for('/remove') %>" method="post">
   <p>
@@ -18,8 +19,8 @@
         <td><%= check_box 'key',$_->Name %></td>
         <td><%= $_->Name %></td>
         <td><a href="<%= $_->URL %>" target="_blank"><%= $_->URL %></a></td>
-        <td><%= $_->Tag %></td
-        ><td><%= $_->Date %></td>
+        <td><%= $_->Tag %></td>
+        <td><%= $_->Date %></td>
       </tr>
   % }
     </tbody>
@@ -27,7 +28,7 @@
 </form>
 <ul class="pagination">
 % for(1..$page->{limit}){
-  <li><a href="<%= url_for("/?page=$_&?name=$name&keyword=$keyword") %>"><%= $_ %></a></li>
+  <li><a href="<%= url_for("/?page=$_&name=$name&keyword=$keyword") %>"><%= $_ %></a></li>
 % }
 </ul>
 <form class="form-inline" action="<%= url_for('/top') %>" method="post">

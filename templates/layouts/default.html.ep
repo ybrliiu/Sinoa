@@ -3,10 +3,10 @@
   <head>
   <%= stylesheet url_for('css/bootstrap.min.css') %>
   <%= stylesheet url_for('css/bootstrap-theme.min.css') %>
-  <%= stylesheet url_for('css/sticky-footer.css') %>
+  <%= stylesheet url_for('css/base.css') %>
   <title><%= $config->{'site'}{'name'} %> - <%= title %></title>
   </head>
-  <body>
+  <body style="background:#ffffff url('<%= url_for("image/$background") %>');background-size: cover;">
     <div class="navbar navbar-inverse">
       <div class="container">
         <strong><a class="navbar-brand" href="<%= url_for('/top') %>"><%= $config->{'site'}{'name'} %> - <%= $config->{'site'}{'description'} %></a></strong>
@@ -15,11 +15,12 @@
     <div class="container">
       <%= content %>
     </div>
-    <footer class="footer">
-      <div class="container">
-        <%= $config->{'site'}{'name'} %> <%= $config->{'site'}{'version'} %> by <%= $config->{'site'}{'author'} %> <a href="<%= url_for('/top') %>">TOP</a><br>
+    <div class="container">
+      <hr>
+      <footer>
+        <%= $config->{'site'}{'name'} %> <%= $config->{'site'}{'version'} %> by <%= $config->{'site'}{'author'} %><br>
         Working on <a href="http://mojolicio.us">Mojolicious</a>
-      </div>
-    </footer>
+      </footer>
+    </div>
   </body>
 </html>

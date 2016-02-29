@@ -1,0 +1,12 @@
+/* テーブル */
+table { background-color:rgba(255,255,255,0.6); }
+th { background-color:rgba(120,120,120,0.7); }
+td { background-color:rgba(220,220,220,0.6); }
+
+/* エラー */
+label.field-with-error{
+  display:inline;
+  color:red;
+  font-weight:bold;
+}
+input.field-with-error{ border: 1px red solid; }

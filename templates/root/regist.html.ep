@@ -1,15 +1,5 @@
-% layout 'default';
+% layout 'default',background => 'bg_1.png';
 % title 'Add bookmark';
-%= stylesheet begin
-
-label.field-with-error{
-  display:inline;
-  color:red;
-  font-weight:bold;
-}
-input.field-with-error{ border: 1px red solid; }
-
-% end
 
 <h1>ADD BOOKMARK</h1>
 
