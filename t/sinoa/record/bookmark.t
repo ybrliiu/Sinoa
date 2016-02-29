@@ -15,7 +15,7 @@ BEGIN {
 }
 
 subtest 'new' => sub {
-  my $obj = $class->new([qw{テストサイト http://test.t テストのサイトです テストタグ 2016/02/28}]);
+  my $obj = $class->new([qw{テストサイト http://test.t テストのサイトです テストタグ 2016/02/28 1111111}]);
   isa_ok($obj,$class);
   is ($class->filedir(),'/etc/record/bookmark.dat');
 };

@@ -24,9 +24,26 @@
   % }
     </tbody>
   </table>
-</from>
+</form>
 <ul class="pagination">
 % for(1..$page->{limit}){
-  <li><a href="<%= url_for("/?page=$_") %>"><%= $_ %></a></li>
+  <li><a href="<%= url_for("/?page=$_&?name=$name&keyword=$keyword") %>"><%= $_ %></a></li>
 % }
 </ul>
+<form class="form-inline" action="<%= url_for('/top') %>" method="post">
+  <div class="form-group">
+    <%= label_for name => 'MODE' %>
+    <%= select_field name => [
+      ['名前順で並べる(通常)' => '', class => 'form-control'],
+      ['時間順で並べる' => 'time', class => 'form-control'],
+      ['名前から探す' => 'find', class => 'form-control'],
+      ['タグから探す' => 'tag', class => 'form-control'],
+      ['URLから探す' => 'url', class => 'form-control'],
+    ], class => 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= label_for 'keyword' => 'KEYWORD' %>
+    <%= text_field 'keyword',class => 'form-control' %>
+  </div>
+  <button type="submit" class="btn btn-default">SORT</button>
+</form>

@@ -5,7 +5,7 @@ package Sinoa::Record::Bookmark {
   use utf8;
   use Carp qw/carp croak/; # モジュールでのwarn/die;
   
-  my @field = qw/Name URL Description Tag Date/; # 属性
+  my @field = qw/Name URL Description Tag Date Time/; # 属性
   use Class::Accessor::Lite(new => 0); # アクセッサ作成
   Class::Accessor::Lite->mk_accessors(@field);
   

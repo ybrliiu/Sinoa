@@ -6,9 +6,21 @@ package Sinoa::Web::Controller::Root {
   sub top {
     my $self = shift;
     
-    my $form = $self->param('page') // 1;
-    my ($bookmark,$page) = $self->model->bookmark->get_bookmark({no => $form,switch => 10});
-    $self->stash(bookmark => $bookmark,page => $page,);
+    my $name = $self->param('name') // '';
+    my $keyword = $self->param('keyword') // '';
+    my ($bookmark,$page) = $self->model->bookmark->get_bookmark({
+      no => $self->param('page') // 1,
+      switch => 10,
+      name => $name,
+      keyword => $keyword,
+    });
+    
+    $self->stash(
+      bookmark => $bookmark,
+      page => $page,
+      name => $name,
+      keyword => $keyword,
+    );
     
     # Render template "root/index.html.ep" with message
     $self->render();

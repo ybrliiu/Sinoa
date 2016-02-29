@@ -1,5 +1,5 @@
 % layout 'default';
-% title 'Regist';
+% title 'Add bookmark';
 %= stylesheet begin
 
 label.field-with-error{
@@ -11,7 +11,7 @@ input.field-with-error{ border: 1px red solid; }
 
 % end
 
-<h1>REGIST</h1>
+<h1>ADD BOOKMARK</h1>
 
 <form action="<%= url_for('/create') %>" method="post">
   <div class="form-group">
@@ -19,13 +19,13 @@ input.field-with-error{ border: 1px red solid; }
     <%= label_for Name => 'Name' %>
     <%= text_field 'Name',class => 'form-control' %>
     <%= label_for URL => 'URL' %>
-    <%= text_field 'URL',class => 'form-control' %>
+    <%= url_field 'URL',class => 'form-control' %>
     <%= label_for Tag => 'Tag' %>
     <%= text_field 'Tag',class => 'form-control' %>
     <%= label_for Description => 'Description' %>
     <%= text_area 'Description',class => 'form-control' %>
   </div>
   <div class="form-group">
-    <button type="submit" class="btn btn-default">Submit</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
   </div>
 </form>

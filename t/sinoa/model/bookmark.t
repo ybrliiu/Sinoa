@@ -3,6 +3,7 @@ use warnings;
 use utf8;
 
 use Test::More;
+use Data::Dumper;
 
 $ENV{MOJO_MODE} = 'test';
 $ENV{SINOA_DEPTH} = 2; # ディレクトリの深さ /t = 0,/t/sinoa = 1,/t/sinoa/model = 2
@@ -23,8 +24,16 @@ subtest 'new' => sub {
 };
 
 subtest 'get_bookmark' => sub {
-  my ($bookmark,$page) = $obj->get_bookmark({no => 1,switch => 10});
+  my ($bookmark,$page) = $obj->get_bookmark({
+    no => 1,
+    switch => 10,
+    name => '',
+    keyword => '',
+  });
   is(ref $bookmark,'ARRAY');
+  ok($bookmark->[0]->Name);
+  # diag(Dumper $bookmark); diag は テストでのsayみたいな感じ
+  # diag($bookmark->[0]);
   is(ref $page,'HASH');
 };
 
