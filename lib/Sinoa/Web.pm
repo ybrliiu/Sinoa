@@ -12,6 +12,9 @@ package Sinoa::Web {
     # 設定ファイル読み込み
     $self->plugin('Config',{file => Sinoa::root_dir.'/etc/config/site.conf'});
     
+    # フォーム検証の拡張(正規表現にマッチしない)
+    $self->validator->add_check(not_like => sub { $_[2] =~ $_[3] });
+    
     # helper
     my $model = Sinoa::Model->new();
     $self->helper(model => sub { $model });
@@ -22,7 +25,9 @@ package Sinoa::Web {
     $r->get('/')->to('root#top');
     $r->any('/top')->to('root#top');
     $r->get('/regist')->to('root#regist');
+    $r->get('/registfolder')->to('root#registfolder');
     $r->post('/create')->to('root#create');
+    $r->post('/createfolder')->to('root#createfolder');
     $r->post('/remove')->to('root#remove');
   }
 

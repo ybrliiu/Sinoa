@@ -10,14 +10,13 @@ $ENV{SINOA_DEPTH} = 2; # ディレクトリの深さ
 my $class;
 
 BEGIN {
-  $class = 'Sinoa::Record::Bookmark';
+  $class = 'Sinoa::Record::Folder';
   use_ok($class);
 }
 
 subtest 'new' => sub {
-  my $obj = $class->new([qw{テストサイト http://test.t テストのサイトです テストタグ 2016/02/28 1111111 0}]);
+  my $obj = $class->new(['test']);
   isa_ok($obj,$class);
-  is ($class->filedir(),'/etc/record/bookmark.dat');
 };
 
 done_testing;

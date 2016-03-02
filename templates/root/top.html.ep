@@ -2,10 +2,15 @@
 % title 'Index';
 
 <h1>BOOKMARK LIST</h1>
+% if($folder){
+<h2>FOLDER:/<%= $folder %></h2>
+% }
 <form action="<%= url_for('/remove') %>" method="post">
   <p>
     <a href="<%= url_for('/regist') %>"><button type="button" class="btn btn-default">ADD</button></a>
+    <%= hidden_field folder => $folder %> 
     <button type="submit" class="btn btn-default">REMOVE</button>
+    <a href="<%= url_for('/registfolder') %>"><button type="button" class="btn btn-default">NEW FOLDER</button></a>
   </p>
   <table class="table table-striped table-bordered table-hover">
     <thead>
@@ -15,6 +20,12 @@
     </thead>
     <tbody>
   % for(@$bookmark) {
+    % if(ref $_ eq "Sinoa::Record::Folder"){
+      <tr>
+        <td><%= check_box 'key',$_->Name %></td>
+        <td colspan="4"><a href="<%= url_for("/top?folder=$folder".$_->Name.'/') %>"><%= $_->Name %></a></td>
+      </tr>
+    % }else{
       <tr>
         <td><%= check_box 'key',$_->Name %></td>
         <td><%= $_->Name %></td>
@@ -22,20 +33,21 @@
         <td><%= $_->Tag %></td>
         <td><%= $_->Date %></td>
       </tr>
+    % }
   % }
     </tbody>
   </table>
 </form>
 <ul class="pagination">
 % for(1..$page->{limit}){
-  <li><a href="<%= url_for("/?page=$_&name=$name&keyword=$keyword") %>"><%= $_ %></a></li>
+  <li><a href="<%= url_for("/top?page=$_&name=$name&keyword=$keyword&folder=$folder") %>"><%= $_ %></a></li>
 % }
 </ul>
 <form class="form-inline" action="<%= url_for('/top') %>" method="post">
   <div class="form-group">
     <%= label_for name => 'MODE' %>
     <%= select_field name => [
-      ['名前順で並べる(通常)' => '', class => 'form-control'],
+      ['通常(フォルダー表示)' => '', class => 'form-control'],
       ['時間順で並べる' => 'time', class => 'form-control'],
       ['名前から探す' => 'find', class => 'form-control'],
       ['タグから探す' => 'tag', class => 'form-control'],

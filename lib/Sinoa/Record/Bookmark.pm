@@ -12,7 +12,7 @@ package Sinoa::Record::Bookmark {
   sub new {
     my ($class,$data) = @_;
     # @field と array_refの引数からオブジェクトにするハッシュを作る
-    my %self = map { $field[$_] => $data->[$_] // croak "Undefined field when make field $field[$_]" } 0..$#field;
+    my %self = map { $field[$_] => $data->[$_] // croak "Undefined field find when make $field[$_]" } 0..$#field;
     return bless \%self,$class;
   }
   

@@ -6,6 +6,8 @@
 <form action="<%= url_for('/create') %>" method="post">
   <div class="form-group">
     <%= csrf_field %>
+    <%= label_for folder => 'Folder' %>
+    <%= select_field folder => $folderlist, class => 'form-control' %>
     <%= label_for Name => 'Name' %>
     <%= text_field 'Name',class => 'form-control' %>
     <%= label_for URL => 'URL' %>
