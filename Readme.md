@@ -1,10 +1,11 @@
 # Sinoa  
 単純なWebブックマークシステム  
 
-# ver1.03変更点  
-・完全なフォルダ作成機能    
+## 変更点  
+・Sinoa.pmでまとめてstrict,warnings,utf8,feature :5.14がuseされるようにした  
+・フォルダ表示の時にリンクで飛べるように  
   
-# TODO  
+## TODO  
 エラー時の処理  
 Modelでのキャッシュ  
 複数タグ  

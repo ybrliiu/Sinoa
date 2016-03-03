@@ -6,6 +6,7 @@ package Sinoa::Web::Controller::Root {
   sub top {
     my $self = shift;
     
+    # 表示するブックマークデータ取得
     my $name = $self->param('name') // '';
     my $keyword = $self->param('keyword') // '';
     my $folder = $self->param('folder') // '';
@@ -18,12 +19,17 @@ package Sinoa::Web::Controller::Root {
       folder => \@dirs,
     });
     
+    # stash
+    my $tmp = '';
+    my @dirlinks = map { $tmp .= "$_/"; $tmp; } @dirs;
     $self->stash(
       bookmark => $bookmark,
       page => $page,
       name => $name,
       keyword => $keyword,
       folder => $folder,
+      dirs => \@dirs,
+      dirlinks => \@dirlinks,
     );
     
     # Render template "root/index.html.ep" with message

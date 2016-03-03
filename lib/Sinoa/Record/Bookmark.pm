@@ -1,8 +1,6 @@
 package Sinoa::Record::Bookmark {
   
-  use v5.14;
-  use warnings;
-  use utf8;
+  use Sinoa; # use v5.14,strict,warnings,utf8 & root_dir
   use Carp qw/carp croak/; # モジュールでのwarn/die;
   
   my @field = qw/Name URL Description Tag Date Time/; # 属性

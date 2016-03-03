@@ -1,12 +1,9 @@
 package Sinoa::Record {
   
-  use v5.14;
-  use warnings;
-  use utf8;
+  use Sinoa; # use v5.14,strict,warnings,utf8 & root_dir
   use Carp qw/carp croak/; # モジュールでのwarn/die;
   
   use Storable qw/fd_retrieve nstore_fd nstore/; # データ保存用
-  use Sinoa;
   
   sub new {
     my ($class,$filedir) = @_;

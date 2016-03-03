@@ -3,7 +3,11 @@
 
 <h1>BOOKMARK LIST</h1>
 % if($folder){
-<h2>FOLDER:/<%= $folder %></h2>
+<h2>FOLDER：
+  % for(0..@$dirs-1) {
+  <a href="<%= url_for("/top?folder=" . $dirlinks->[$_]) %>"><%= $dirs->[$_] %></a> /
+  % }
+</h2>
 % }
 <form action="<%= url_for('/remove') %>" method="post">
   <p>

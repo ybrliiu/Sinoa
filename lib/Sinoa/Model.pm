@@ -1,8 +1,6 @@
 package Sinoa::Model {
   
-  use v5.14;
-  use warnings;
-  use utf8;
+  use Sinoa; # use v5.14,strict,warnings,utf8 & root_dir
   
   use Sinoa::Model::Bookmark;
   
