@@ -22,11 +22,11 @@ package Sinoa {
   
   # プロジェクトルートディレクトリ取得
   sub root_dir {
-    my $self = shift;
+    my $class = shift;
     state $project_dir;
     return $project_dir if $project_dir;
     my $home = Mojo::Home->new;
-    $home->detect(ref $self);
+    $home->detect(ref $class);
     my $depth = '../';
     if($ENV{MOJO_MODE} eq 'test' && $ENV{SINOA_DEPTH} > 0){
       $depth .= '../' for 1..$ENV{SINOA_DEPTH};

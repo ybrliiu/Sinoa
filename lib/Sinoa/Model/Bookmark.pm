@@ -18,7 +18,7 @@ package Sinoa::Model::Bookmark {
   
   sub _select_dir {
     my ($last_dir,$dirs) = @_;
-    for(0..scalar(@$dirs)-1){
+    for(0..@$dirs-1){
       $last_dir = $last_dir->{$dirs->[$_]}->Include;
     }
     return $last_dir;
@@ -84,38 +84,40 @@ package Sinoa::Model::Bookmark {
   
   sub get_bookmark {
     my ($self,$option) = @_;
-    my $bookmark = $self->{Record}->open;
+    my $rec = $self->{Record}->open;
     my %page = (
       switch => $option->{switch} // 10, # 何件で切り替えるか
       current => $option->{no} - 1 // 0, # 表示するページ数
-      limit => int(@{$bookmark->get_list()} / $option->{switch} + 0.99), # ページ数、数が大きくなりすぎた時にバグる
+      limit => undef, # ページ数,値を返す前に代入
     );
-    my @tmp = @{_sort($bookmark->get_alldata(),$option)};
+    
+    # ブックマークを指定された順にソートする
+    my @tmp = @{_sort($rec->get_alldata(),$option)};
+    
+    # 表示するブックマークを抽出
     my @bookmark = map {
       $tmp[$_] ? $tmp[$_] : ()
     } $page{current} * $page{switch}..$page{current} * $page{switch} + $page{switch} - 1;
+    
+    $page{limit} = int(@bookmark / $option->{switch} + 0.99); # 数が大きすぎるとバグる  
     return \@bookmark,\%page;
   }
   
   sub _sort {
     my ($bookmark,$option) = @_;
-    my @result;
-    if($option->{mode} eq 'tag'){
-      @result = __tag($bookmark,$option);
-    }elsif($option->{mode} eq 'time'){
-      @result = __time($bookmark,$option);
-    }elsif($option->{mode} eq 'find'){
-      @result = __like($bookmark,$option,'Name');
-    }elsif($option->{mode} eq 'url'){
-      @result = __like($bookmark,$option,'URL');
-    }else{
-      unless($option->{folder}){
-        @result = __nomal($bookmark);
-      }else{
-        my $last_dir = _select_dir($bookmark,$option->{folder});
-        @result = __nomal($last_dir);
+    my @result = do {
+      if ($option->{mode} eq 'tag') { __tag($bookmark, $option) }
+      elsif ($option->{mode} eq 'time') { __time($bookmark, $option) }
+      elsif ($option->{mode} eq 'find') { __like($bookmark, $option, 'Name') }
+      elsif ($option->{mode} eq 'url') { __like($bookmark, $option, 'URL') }
+      else {
+        unless ($option->{folder}) {
+          __nomal( $bookmark )
+        }else{
+          __nomal( _select_dir($bookmark, $option->{folder}) )
+        }
       }
-    }
+    };
     return \@result;
   }
   
