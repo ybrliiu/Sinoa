@@ -1,5 +1,6 @@
-/* */
-body { color:#ddddff; }
+/* 文字色 */
+body { color:#ffffff; }
+h1,h2 { color:#333333; }
 
 /* テーブル */
 table {
@@ -16,3 +17,29 @@ label.field-with-error{
   font-weight:bold;
 }
 input.field-with-error{ border: 1px red solid; }
+
+/* ツールチップ */
+#tooltip {
+  position: relative;
+}
+
+#tooltip span {
+  display: block;
+  position: absolute;
+  color: #ffffff;
+  text-decoration: none;
+  visibility: hidden;
+  width: 300px;
+  z-index: 0;
+  top: 40px;
+  left: 30px;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.7);
+  border: solid 1px #a9987c;
+  border-radius: 5px;
+}
+
+#tooltip:hover, #tooltip:hover span {
+  visibility: visible;
+  z-index: 2;
+}

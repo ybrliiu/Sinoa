@@ -2,7 +2,6 @@
 <html>
   <head>
   <%= stylesheet url_for('css/bootstrap.min.css') %>
-  <%= stylesheet url_for('css/bootstrap-theme.min.css') %>
   <%= stylesheet url_for('css/base.css') %>
   <title><%= $config->{'site'}{'name'} %> - <%= title %></title>
   </head>

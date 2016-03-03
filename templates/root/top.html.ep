@@ -32,7 +32,12 @@
     % }else{
       <tr>
         <td><%= check_box 'key',$_->Name %></td>
-        <td><%= $_->Name %></td>
+        <td>
+          <span id="tooltip">
+            <span><%= $_->Description %></span>
+            <%= $_->Name %>
+          </span>
+        </td>
         <td><a href="<%= $_->URL %>" target="_blank"><%= $_->URL %></a></td>
         <td><%= $_->Tag %></td>
         <td><%= $_->Date %></td>
