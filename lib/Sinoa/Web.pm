@@ -28,7 +28,11 @@ package Sinoa::Web {
     $r->get('/registfolder')->to('root#registfolder');
     $r->post('/create')->to('root#create');
     $r->post('/createfolder')->to('root#createfolder');
-    $r->post('/remove')->to('root#remove');
+    
+    $r->get('/edit/bookmark')->to('edit#bookmark');
+    $r->get('/edit/folder')->to('edit#folder');
+    $r->post('/edit/edit')->to('edit#edit');
+    $r->any('/edit/remove')->to('edit#remove');
   }
 
 }

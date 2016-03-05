@@ -7,14 +7,14 @@ package Sinoa::Web::Controller::Root {
     my $self = shift;
     
     # 表示するブックマークデータ取得
-    my $name = $self->param('name') // '';
+    my $mode = $self->param('mode') // '';
     my $keyword = $self->param('keyword') // '';
     my $folder = $self->param('folder') // '';
     my @dirs = split(/\//,$folder);
     my ($bookmark,$page) = $self->model->bookmark->get_bookmark({
       no => $self->param('page') // 1,
       switch => 10,
-      mode => $name,
+      mode => $mode,
       keyword => $keyword,
       folder => \@dirs,
     });
@@ -25,14 +25,14 @@ package Sinoa::Web::Controller::Root {
     $self->stash(
       bookmark => $bookmark,
       page => $page,
-      name => $name,
+      mode => $mode,
       keyword => $keyword,
       folder => $folder,
       dirs => \@dirs,
       dirlinks => \@dirlinks,
     );
     
-    # Render template "root/index.html.ep" with message
+    # Render template "root/top.html.ep" with message
     $self->render();
   }
   
@@ -93,14 +93,6 @@ package Sinoa::Web::Controller::Root {
     
     $self->model->bookmark->create_folder($self->param('Name'),\@dirs);
     
-    $self->redirect_to('/top');
-  }
-  
-  # ブックマーク削除
-  sub remove {
-    my $self = shift;
-    my @dirs = split(/\//,$self->param('folder'));
-    $self->model->bookmark->remove($self->every_param('key'),\@dirs);
     $self->redirect_to('/top');
   }
 

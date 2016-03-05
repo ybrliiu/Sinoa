@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <%= stylesheet url_for('css/bootstrap.min.css') %>
-  <%= stylesheet url_for('css/base.css') %>
+  <%= stylesheet url_for('/css/bootstrap.min.css') %>
+  <%= stylesheet url_for('/css/base.css') %>
+  <%= javascript url_for('/js/jquery-2.2.0.min.js') %>
   <title><%= $config->{'site'}{'name'} %> - <%= title %></title>
   </head>
-  <body style="background:#ffffff url('<%= url_for("image/$background") %>');background-size: cover;">
+  <body style="background:#ffffff url('<%= url_for("/image/$background") %>');background-size: cover;">
     <div class="navbar navbar-inverse">
       <div class="container">
-        <strong><a class="navbar-brand" href="<%= url_for('/top') %>"><%= $config->{'site'}{'name'} %> - <%= $config->{'site'}{'description'} %></a></strong>
+        <strong><a class="navbar-brand" href="<%= url_for('/top') %>"><%= $config->{'site'}{'name'} %> - <%= $config->{'site'}{'description'} %></a></suhtrong>
       </div>
     </div>
     <div class="container">

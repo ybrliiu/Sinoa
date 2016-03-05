@@ -9,12 +9,13 @@
   % }
 </h2>
 % }
-<form action="<%= url_for('/remove') %>" method="post">
   <p>
     <a href="<%= url_for('/regist') %>"><button type="button" class="btn btn-default">ADD</button></a>
-    <%= hidden_field folder => $folder %> 
-    <button type="submit" class="btn btn-default">REMOVE</button>
     <a href="<%= url_for('/registfolder') %>"><button type="button" class="btn btn-default">NEW FOLDER</button></a>
+% unless($mode){
+    <button type="button" class="btn btn-default" id="edit">EDIT</button>
+    <button type="button" class="btn btn-default" id="remove">REMOVE</button>
+% }
   </p>
   <table class="table table-striped table-bordered table-hover">
     <thead>
@@ -26,12 +27,12 @@
   % for(@$bookmark) {
     % if(ref $_ eq "Sinoa::Record::Folder"){
       <tr>
-        <td><%= check_box 'key',$_->Name %></td>
+        <td><%= check_box 'key',$_->Name,id => 'folder' %></td>
         <td colspan="4"><a href="<%= url_for("/top?folder=$folder".$_->Name.'/') %>"><%= $_->Name %></a></td>
       </tr>
     % }else{
       <tr>
-        <td><%= check_box 'key',$_->Name %></td>
+        <td><%= check_box 'key',$_->Name,id => 'bookmark' %></td>
         <td>
           <span id="tooltip">
             <span><%= $_->Description %></span>
@@ -46,16 +47,15 @@
   % }
     </tbody>
   </table>
-</form>
 <ul class="pagination">
 % for(1..$page->{limit}){
-  <li><a href="<%= url_for("/top?page=$_&name=$name&keyword=$keyword&folder=$folder") %>"><%= $_ %></a></li>
+  <li><a href="<%= url_for("/top?page=$_&mode=$mode&keyword=$keyword&folder=$folder") %>"><%= $_ %></a></li>
 % }
 </ul>
 <form class="form-inline" action="<%= url_for('/top') %>" method="post">
   <div class="form-group">
-    <%= label_for name => 'MODE' %>
-    <%= select_field name => [
+    <%= label_for mode => 'MODE' %>
+    <%= select_field mode => [
       ['通常(フォルダー表示)' => '', class => 'form-control'],
       ['時間順で並べる' => 'time', class => 'form-control'],
       ['名前から探す' => 'find', class => 'form-control'],
@@ -69,3 +69,64 @@
   </div>
   <button type="submit" class="btn btn-default">SORT</button>
 </form>
+
+% unless ($mode) {
+%= javascript begin
+
+'use strict';
+
+/* click remove */
+document.getElementById('remove').addEventListener('click',function(eve) {
+  var e = document.getElementsByName("key");
+  var array = new Array();
+  var num = 0;
+  for(var i=0;i<e.length;i++){
+    if(e[i].checked){
+      array[num] = e[i].value;
+      num++;
+    }
+  }
+  
+  var json = {
+    'key' : [].concat(array), // 配列のシャローコピー
+    'dir' : '<%= $folder %>'
+  };
+  
+  send('<%= url_for('/edit/remove') %>',json);
+},false);
+
+/* send json */
+function send(to,json) {
+  $.ajax({
+    url: to,
+    cache: false,
+    data: JSON.stringify(json),
+    contentType: 'application/JSON',
+    type: 'json',
+  }).done(function(data,textStatus,jqXHR){
+    window.location.href = '<%= url_for('/top') %>';
+  });
+}
+
+/* click edit */
+document.getElementById('edit').addEventListener('click',function(eve) {
+  var e = document.getElementsByName("key");
+  for(var i=0;i<e.length;i++){
+    if(e[i].checked){
+      var key = e[i].value;
+      var type = e[i].id;
+      break;
+    }
+  }
+  console.log(type);
+  
+  if(type === 'bookmark'){
+    window.location.href = '<%= url_for('/edit/bookmark') %>?key=' + key + '&dir=<%= $folder %>';
+  }else if(type === 'folder'){
+    window.location.href = '<%= url_for('/edit/folder') %>?key=' + key + '&dir=<%= $folder %>';
+  }
+  
+},false);
+
+% end
+% }

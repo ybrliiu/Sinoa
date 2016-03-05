@@ -19,6 +19,13 @@ package Sinoa::Record::Bookmark {
     return '/etc/record/bookmark.dat';
   }
   
+  sub edit {
+    my ($self,$data) = @_;
+    for(0..@field-1){
+      $self->{$field[$_]} = $data->[$_] if $data->[$_];
+    }
+  }
+  
 }
 
 1;

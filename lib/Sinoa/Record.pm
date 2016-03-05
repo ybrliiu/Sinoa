@@ -39,7 +39,7 @@ package Sinoa::Record {
   
   sub close {
     my $self = shift;
-    truncate($self->{FH},0) or croak 'truncate失敗 書き込みモードで2度ファイルを開いている可能性があります';
+    truncate($self->{FH},0) or croak 'truncate失敗 おそらく書き込みモードでファイルを開いていないか、書き込みモードで2度ファイルを開いている';
     seek($self->{FH},0,0) or croak 'seek失敗';
     nstore_fd($self->{Data},$self->{FH}) or croak 'nstore_fd失敗';
     close $self->{FH} or croak 'close失敗';

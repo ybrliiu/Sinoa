@@ -24,6 +24,9 @@ package Sinoa::Model::Bookmark {
     return $last_dir;
   }
   
+  # object判定
+  sub _is_class { ref $_[0] eq 'Sinoa::Record::Bookmark' ? return 1 : return 0; }
+  
   sub _create {
     my ($self,$data,$dirs,$mode) = @_;
     my $pkg = "Sinoa::Record::$mode";
@@ -34,33 +37,81 @@ package Sinoa::Model::Bookmark {
     $rec->close();
   }
   
-  sub create {
-    my ($self,$data) = @_;
-    my $dirs = $_[2] // [];
-    # こういうところにバリデーション書いてもいいかもね
-    $data->[4] = _now();
-    $data->[5] = time();
-    $self->_create($data,$dirs,'Bookmark');
-  }
-    
   sub _now {
     my $t = localtime();
     return $t->year.'/'.$t->mon.'/'.$t->mday.' '.$t->hour.':'.$t->min.':'.$t->sec;
   }
   
+  sub create {
+    my ($self,$data,$dirs) = @_;
+    # こういうところにバリデーション書いてもいいかもね
+    $data->[4] = _now();
+    $data->[5] = time();
+    $self->_create($data,$dirs,'Bookmark');
+  }
+  
   sub create_folder {
-    my ($self,$name) = @_;
-    my $dirs = $_[2] // [];
+    my ($self,$name,$dirs) = @_;
     $self->_create([$name],$dirs,'Folder');
   }
   
+  sub get_info {
+    my ($self,$name,$dirs) = @_;
+    my $current = _select_dir( $self->{Record}->open->get_alldata(), $dirs );
+    return $current->{$name};
+  }
+  
+  # 名前変更するとき
+  sub _name_change {
+    my ($dir,$oldname,$newname) = @_;
+    if($oldname ne $newname){
+      warn 'change is...';
+      $dir->{$newname} = $dir->{$oldname};
+      delete $dir->{$oldname};
+    }
+  }
+  
+  # フォルダ、ブックマークデータ編集,場所変更
+  sub edit {
+    my ($self,$name,$data,$folders) = @_;
+    
+    # 内容の書き換え
+    my $rec = $self->{Record}->open(1);
+    my $bookmark = $rec->get_alldata();
+    my $current = _select_dir($bookmark, $folders->{current});
+    my $obj = $current->{$name};
+    $obj->edit($data);
+    
+    # 場所を変更するとき
+    if($folders->{'current_str'} ne $folders->{'next_str'}){
+      my $next = _select_dir($bookmark, $folders->{'next'});
+      $next->{$name} = $obj;
+      delete $current->{$name};
+      _name_change($next, $name, $obj->Name);
+    }else{
+      _name_change($current, $name, $obj->Name);
+    }
+    $rec->close();
+  }
+  
   sub remove {
-    my ($self,$deletes) = @_;
-    my $dirs = $_[2] // [];
+    my ($self,$deletes,$dirs) = @_;
     my $rec = $self->{Record}->open(1);
     my $last_dir = _select_dir($rec->get_alldata(),$dirs);
     delete $last_dir->{$_} for(@$deletes);
     $rec->close();
+  }
+
+  sub _folderlist {
+    my ($bookmark,$char) = @_;
+    map {
+      unless( _is_class($bookmark->{$_}) ){
+        my $name = $bookmark->{$_}->Name;
+        $char.$name, _folderlist($bookmark->{$_}->Include,"$char$name/");
+      }else{
+        ();
+      }
+    } sort(keys %$bookmark);
   }
   
   sub get_folderlist {
@@ -70,20 +121,10 @@ package Sinoa::Model::Bookmark {
     return \@folderlist;
   }
   
-  sub _folderlist {
-    my ($bookmark,$char) = @_;
-    map {
-      unless( ___is_class($bookmark->{$_}) ){
-        my $name = $bookmark->{$_}->Name;
-        $char.$name, _folderlist($bookmark->{$_}->Include,"$char$name/");
-      }else{
-        ();
-      }
-    } sort(keys %$bookmark);
-  }
-  
   sub get_bookmark {
     my ($self,$option) = @_;
+    $option->{folder} //= [];
+    
     my $rec = $self->{Record}->open;
     my %page = (
       switch => $option->{switch} // 10, # 何件で切り替えるか
@@ -99,7 +140,7 @@ package Sinoa::Model::Bookmark {
       $tmp[$_] ? $tmp[$_] : ()
     } $page{current} * $page{switch}..$page{current} * $page{switch} + $page{switch} - 1;
     
-    $page{limit} = int(@bookmark / $option->{switch} + 0.99); # 数が大きすぎるとバグる  
+    $page{limit} = int(@tmp / $option->{switch} + 0.99); # 数が大きすぎるとバグる  
     return \@bookmark,\%page;
   }
   
@@ -110,24 +151,15 @@ package Sinoa::Model::Bookmark {
       elsif ($option->{mode} eq 'time') { __time($bookmark, $option) }
       elsif ($option->{mode} eq 'find') { __like($bookmark, $option, 'Name') }
       elsif ($option->{mode} eq 'url') { __like($bookmark, $option, 'URL') }
-      else {
-        unless ($option->{folder}) {
-          __nomal( $bookmark )
-        }else{
-          __nomal( _select_dir($bookmark, $option->{folder}) )
-        }
-      }
+      else { __nomal( _select_dir($bookmark, $option->{folder}) ) }
     };
     return \@result;
   }
   
-  # object判定
-  sub ___is_class { ref $_[0] eq 'Sinoa::Record::Bookmark' ? return 1 : return 0; }
-  
   sub __tag{
     my ($bookmark,$option) = @_;
     map {
-      if(___is_class $bookmark->{$_}){
+      if( _is_class($bookmark->{$_}) ){
         # bookmark obj
         $option->{'keyword'} eq $bookmark->{$_}->Tag ? $bookmark->{$_} : ();
       }else{
@@ -140,7 +172,7 @@ package Sinoa::Model::Bookmark {
   sub __time{
     my ($bookmark,$option) = @_;
     map {
-      ___is_class($bookmark->{$_}) ? $bookmark->{$_} : __time($bookmark->{$_}->Include,$option);
+      _is_class($bookmark->{$_}) ? $bookmark->{$_} : __time($bookmark->{$_}->Include,$option);
     } sort { $bookmark->{$a}->Time <=> $bookmark->{$b}->Time }(keys %$bookmark);
   }
   
@@ -148,7 +180,7 @@ package Sinoa::Model::Bookmark {
   sub __like {
     my ($bookmark,$option,$mode) = @_;
     map {
-      if(___is_class $bookmark->{$_}){
+      if( _is_class($bookmark->{$_}) ){
         $bookmark->{$_}->$mode =~ /$option->{'keyword'}/ ? $bookmark->{$_} : ();
       }else{
         __like($bookmark->{$_}->Include,$option,$mode);
@@ -159,6 +191,11 @@ package Sinoa::Model::Bookmark {
   sub __nomal {
     my $bookmark = shift;
     map { $bookmark->{$_} } sort(keys %$bookmark);
+  }
+  
+  sub debug {
+    my $self = shift;
+    return $self->{Record}->get_alldata();
   }
   
 }
@@ -236,5 +273,14 @@ Sinoa::Model::Bookmark - ブックマークデータを取得、操作するた�
     # folder => ['test','test2'],
   };
   返却値;$bookmark(表示するブックマークを格納したarrayref),\%page(ページに関する情報)
+  
+=head2 edit
+  
+  ブックマーク、フォルダの情報を編集します。
+  引数:$self,$mode,$data,$folder
+  $mode:bookmark or folder
+  $data:bookmarkかfolderオブジェクトを作るための情報,array_ref
+  $folder:フォルダ移動するときに使用,hash_ref,移動前と移動後の情報
+  
   
 =cut

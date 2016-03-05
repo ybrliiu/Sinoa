@@ -1,0 +1,25 @@
+% layout 'default',background => 'bg_1.png';
+% title 'Edit bookmark';
+
+<h1>EDIT BOOKMARK</h1>
+
+<form action="<%= url_for('/edit/edit') %>" method="post">
+  <div class="form-group">
+    <%= csrf_field %>
+    <%= hidden_field name => $key %>
+    <%= hidden_field current_folder => $dir %>
+    <%= label_for Folder => 'Folder' %>
+    <%= select_field Folder => $folderlist, class => 'form-control' %>
+    <%= label_for Name => 'Name' %>
+    <%= text_field 'Name',class => 'form-control', value => $obj->Name %>
+    <%= label_for URL => 'URL' %>
+    <%= url_field 'URL',class => 'form-control', value => $obj->URL %>
+    <%= label_for Tag => 'Tag' %>
+    <%= text_field 'Tag',class => 'form-control', value => $obj->Tag %>
+    <%= label_for Description => 'Description' %>
+    <%= text_area 'Description',class => 'form-control', value => $obj->Description %>
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
