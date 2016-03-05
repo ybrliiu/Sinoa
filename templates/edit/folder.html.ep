@@ -1,17 +1,17 @@
-% layout 'default',background => 'bg_1.png';
+% layout 'default',background => 'bg_4.png';
 % title 'Edit folder';
 
 <h1>EDIT FOLDER</h1>
 
-<form action="<%= url_for('/edit/edit') %>" method="post">
+<form action="<%= url_for('/edit/editfolder') %>" method="post">
   <div class="form-group">
     <%= csrf_field %>
-    <%= hidden_field name => $key %>
+    <%= hidden_field current_Name => $key %>
     <%= hidden_field current_folder => $dir %>
-    <%= label_for folder => 'Folder' %>
-    <%= select_field Folder => $folderlist, class => 'form-control' %>
-    <%= label_for Name => 'Name' %>
-    <%= text_field 'Name',class => 'form-control', placeholder => '1〜30文字、"/"は使用不可', value => $obj->Name %>
+    <%= label_for next_folder => 'Folder' %>
+    <%= select_field next_folder => $folderlist, class => 'form-control' %>
+    <%= label_for next_Name => 'Name' %>
+    <%= text_field 'next_Name',class => 'form-control', value => $obj->Name %>
   </div>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Submit</button>

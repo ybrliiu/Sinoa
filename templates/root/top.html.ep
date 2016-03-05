@@ -10,8 +10,8 @@
 </h2>
 % }
   <p>
-    <a href="<%= url_for('/regist') %>"><button type="button" class="btn btn-default">ADD</button></a>
-    <a href="<%= url_for('/registfolder') %>"><button type="button" class="btn btn-default">NEW FOLDER</button></a>
+    <a href="<%= url_for('/add/bookmark') %>"><button type="button" class="btn btn-default">ADD</button></a>
+    <a href="<%= url_for('/add/folder') %>"><button type="button" class="btn btn-default">NEW FOLDER</button></a>
 % unless($mode){
     <button type="button" class="btn btn-default" id="edit">EDIT</button>
     <button type="button" class="btn btn-default" id="remove">REMOVE</button>
@@ -35,7 +35,7 @@
         <td><%= check_box 'key',$_->Name,id => 'bookmark' %></td>
         <td>
           <span id="tooltip">
-            <span><%= $_->Description %></span>
+            <span><%= line_break($_->Description) %></span>
             <%= $_->Name %>
           </span>
         </td>

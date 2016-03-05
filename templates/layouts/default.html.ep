@@ -15,12 +15,9 @@
     <div class="container">
       <%= content %>
     </div>
-    <div class="container">
-      <hr>
-      <footer>
+    <footer class="footer">
         <%= $config->{'site'}{'name'} %> <%= $config->{'site'}{'version'} %> by <%= $config->{'site'}{'author'} %><br>
         Working on <a href="http://mojolicio.us">Mojolicious</a>
-      </footer>
-    </div>
+    </footer>
   </body>
 </html>

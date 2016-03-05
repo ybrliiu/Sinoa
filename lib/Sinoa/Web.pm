@@ -17,21 +17,28 @@ package Sinoa::Web {
     
     # helper
     my $model = Sinoa::Model->new();
-    $self->helper(model => sub { $model });
+    $self->helper(model => sub { $model }); # model層呼び出し
+    $self->helper(line_break => sub { # 改行用 for template
+      $_[1] =~ s/\n/<br>/g;
+      return Mojo::ByteStream->new($_[1]);
+    });
     
     # Router
     my $r = $self->routes;
     $r->namespaces([qw/Sinoa::Web::Controller/]);
+    
     $r->get('/')->to('root#top');
     $r->any('/top')->to('root#top');
-    $r->get('/regist')->to('root#regist');
-    $r->get('/registfolder')->to('root#registfolder');
-    $r->post('/create')->to('root#create');
-    $r->post('/createfolder')->to('root#createfolder');
+    
+    $r->get('/add/bookmark')->to('add#bookmark');
+    $r->get('/add/folder')->to('add#folder');
+    $r->post('/add/addbookmark')->to('add#addbookmark');
+    $r->post('/add/addfolder')->to('add#addfolder');
     
     $r->get('/edit/bookmark')->to('edit#bookmark');
     $r->get('/edit/folder')->to('edit#folder');
-    $r->post('/edit/edit')->to('edit#edit');
+    $r->post('/edit/editbookmark')->to('edit#editbookmark');
+    $r->post('/edit/editfolder')->to('edit#editfolder');
     $r->any('/edit/remove')->to('edit#remove');
   }
 

@@ -1,5 +1,8 @@
 /* 文字色 */
-body { color:#ffffff; }
+body {
+  color:#ffffff;
+  text-shadow:1px 1px 1px #555555;
+}
 h1,h2 { color:#333333; }
 
 /* テーブル */
@@ -17,6 +20,14 @@ label.field-with-error{
   font-weight:bold;
 }
 input.field-with-error{ border: 1px red solid; }
+
+/* footer */
+.footer {
+  width:100%;
+  margin-top:20px;
+  padding:15px 15px 15px 90px;
+  background-color: #555555;
+}
 
 /* ツールチップ */
 #tooltip {

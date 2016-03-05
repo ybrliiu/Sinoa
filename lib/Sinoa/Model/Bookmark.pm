@@ -16,6 +16,7 @@ package Sinoa::Model::Bookmark {
     return bless $self,$class;
   }
   
+  # 指定フォルダの中身を取り出すため
   sub _select_dir {
     my ($last_dir,$dirs) = @_;
     for(0..@$dirs-1){
@@ -42,6 +43,7 @@ package Sinoa::Model::Bookmark {
     return $t->year.'/'.$t->mon.'/'.$t->mday.' '.$t->hour.':'.$t->min.':'.$t->sec;
   }
   
+  # ブックマーク作成
   sub create {
     my ($self,$data,$dirs) = @_;
     # こういうところにバリデーション書いてもいいかもね
@@ -50,11 +52,13 @@ package Sinoa::Model::Bookmark {
     $self->_create($data,$dirs,'Bookmark');
   }
   
+  # フォルダ作成
   sub create_folder {
     my ($self,$name,$dirs) = @_;
     $self->_create([$name],$dirs,'Folder');
   }
   
+  # ブックマークorフォルダの情報１つ取得
   sub get_info {
     my ($self,$name,$dirs) = @_;
     my $current = _select_dir( $self->{Record}->open->get_alldata(), $dirs );
@@ -65,7 +69,6 @@ package Sinoa::Model::Bookmark {
   sub _name_change {
     my ($dir,$oldname,$newname) = @_;
     if($oldname ne $newname){
-      warn 'change is...';
       $dir->{$newname} = $dir->{$oldname};
       delete $dir->{$oldname};
     }
@@ -94,6 +97,7 @@ package Sinoa::Model::Bookmark {
     $rec->close();
   }
   
+  # ブクマorフォルダ削除
   sub remove {
     my ($self,$deletes,$dirs) = @_;
     my $rec = $self->{Record}->open(1);
@@ -107,13 +111,14 @@ package Sinoa::Model::Bookmark {
     map {
       unless( _is_class($bookmark->{$_}) ){
         my $name = $bookmark->{$_}->Name;
-        $char.$name, _folderlist($bookmark->{$_}->Include,"$char$name/");
+        "$char$name/", _folderlist($bookmark->{$_}->Include,"$char$name/");
       }else{
         ();
       }
     } sort(keys %$bookmark);
   }
   
+  # フォルダリスト取得
   sub get_folderlist {
     my $self = shift;
     my @folderlist = _folderlist($self->{Record}->open->get_alldata(),'');
@@ -121,6 +126,7 @@ package Sinoa::Model::Bookmark {
     return \@folderlist;
   }
   
+  # ブックマークリスト取得
   sub get_bookmark {
     my ($self,$option) = @_;
     $option->{folder} //= [];
@@ -144,6 +150,7 @@ package Sinoa::Model::Bookmark {
     return \@bookmark,\%page;
   }
   
+  # modeで指定されたとおりにソート
   sub _sort {
     my ($bookmark,$option) = @_;
     my @result = do {
@@ -156,6 +163,7 @@ package Sinoa::Model::Bookmark {
     return \@result;
   }
   
+  # タグ
   sub __tag{
     my ($bookmark,$option) = @_;
     map {
@@ -169,6 +177,7 @@ package Sinoa::Model::Bookmark {
     } sort(keys %$bookmark);
   }
   
+  # 時間順
   sub __time{
     my ($bookmark,$option) = @_;
     map {
@@ -188,14 +197,10 @@ package Sinoa::Model::Bookmark {
     } sort(keys %$bookmark);
   }
   
+  # 通常、フォルダ階層表示
   sub __nomal {
     my $bookmark = shift;
     map { $bookmark->{$_} } sort(keys %$bookmark);
-  }
-  
-  sub debug {
-    my $self = shift;
-    return $self->{Record}->get_alldata();
   }
   
 }
@@ -277,10 +282,24 @@ Sinoa::Model::Bookmark - ブックマークデータを取得、操作するた�
 =head2 edit
   
   ブックマーク、フォルダの情報を編集します。
-  引数:$self,$mode,$data,$folder
-  $mode:bookmark or folder
-  $data:bookmarkかfolderオブジェクトを作るための情報,array_ref
-  $folder:フォルダ移動するときに使用,hash_ref,移動前と移動後の情報
-  
+  引数:$self,$name,$data,$folders
+  $name:編集するbookmark,folderの名前
+  $data:bookmark,folderオブジェクトを編集の情報,array_ref
+    bookmarkのとき:[
+      Name,
+      URL,
+      Description, # 説明文
+      Tag,
+    ];
+    folderのとき:[
+      Name,
+    ];
+  $folders:フォルダ関係の情報,hash_ref
+    $folders = {
+      current => '現在編集中のbookmark,folderがあるフォルダ(階層ごとに分割して配列に格納したもの)',
+      current_str => '現在編集中のbookmark,folderがあるフォルダ(パス)',
+      next => '移動先の...',
+      next_str => '移動先の...',
+    };
   
 =cut

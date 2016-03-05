@@ -1,23 +1,25 @@
-% layout 'default',background => 'bg_1.png';
+% layout 'default',background => 'bg_3.png';
 % title 'Edit bookmark';
 
 <h1>EDIT BOOKMARK</h1>
 
-<form action="<%= url_for('/edit/edit') %>" method="post">
+<form action="<%= url_for('/edit/editbookmark') %>" method="post">
   <div class="form-group">
     <%= csrf_field %>
-    <%= hidden_field name => $key %>
+    <%= hidden_field current_Name => $key %>
     <%= hidden_field current_folder => $dir %>
-    <%= label_for Folder => 'Folder' %>
-    <%= select_field Folder => $folderlist, class => 'form-control' %>
-    <%= label_for Name => 'Name' %>
-    <%= text_field 'Name',class => 'form-control', value => $obj->Name %>
-    <%= label_for URL => 'URL' %>
-    <%= url_field 'URL',class => 'form-control', value => $obj->URL %>
-    <%= label_for Tag => 'Tag' %>
-    <%= text_field 'Tag',class => 'form-control', value => $obj->Tag %>
-    <%= label_for Description => 'Description' %>
-    <%= text_area 'Description',class => 'form-control', value => $obj->Description %>
+    <%= label_for next_folder => 'Folder' %>
+    <%= select_field next_folder => $folderlist, class => 'form-control' %>
+    <%= label_for next_Name => 'Name' %>
+    <%= text_field 'next_Name',class => 'form-control', value => $obj->Name %>
+    <%= label_for next_URL => 'URL' %>
+    <%= text_field 'next_URL',class => 'form-control', value => $obj->URL %>
+    <%= label_for next_Tag => 'Tag' %>
+    <%= text_field 'next_Tag',class => 'form-control', value => $obj->Tag %>
+    <%= label_for next_Description => 'Description' %>
+    <%= text_area 'next_Description' => (class => 'form-control',cols => 3) => begin %>
+<%= $obj->Description %>
+<% end %>
   </div>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Submit</button>
