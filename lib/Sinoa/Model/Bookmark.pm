@@ -1,8 +1,8 @@
 package Sinoa::Model::Bookmark {
   
-  use Sinoa; # use v5.14,strict,warnings,utf8 & root_dir
+  use Sinoa; # use v5.14,warnings,utf8 & root_dir
   use Carp qw/carp croak/;
-  
+
   use Sinoa::Record;
   use Sinoa::Record::Bookmark;
   use Sinoa::Record::Folder;
