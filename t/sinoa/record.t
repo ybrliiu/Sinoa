@@ -17,7 +17,7 @@ BEGIN {
 subtest 'new' => sub {
   my $obj = $class->new();
   isa_ok($obj,$class);
-  can_ok($obj,qw/open make close find add delete get_alldata set_alldata get_list/);
+  can_ok($obj,qw/open make close get_alldata set_alldata/);
 };
 
 done_testing;
