@@ -34,7 +34,6 @@ package Sinoa::Record {
     my $self = shift;
     my %hash = ();
     nstore(\%hash,$self->{File});
-    &open($self->{FH},'<',$self->{File}); # '&'付けないと警告出る
   }
   
   sub close {
@@ -43,25 +42,6 @@ package Sinoa::Record {
     seek($self->{FH},0,0) or croak 'seek失敗';
     nstore_fd($self->{Data},$self->{FH}) or croak 'nstore_fd失敗';
     close $self->{FH} or croak 'close失敗';
-  }
-  
-  sub find {
-    my ($self,$key) = @_;
-    return 0 unless $self->{Data}->{$key}; # 存在しなければ偽を返却
-    return $self->{Data}->{$key};
-  }
-  
-  sub add {
-    my ($self,$key,$obj) = @_;
-    $self->{Data}->{$key} = $obj;
-    return $self;
-  }
-  
-  sub delete {
-    my ($self,$key) = @_;
-    my %tmp = %{$self->{Data}};
-    delete $tmp{$key};
-    $self->{Data} = \%tmp;
   }
   
   sub get_alldata {
@@ -75,11 +55,6 @@ package Sinoa::Record {
     $self->{Data} = $data;
   }
   
-  sub get_list {
-    my $self = shift;
-    my @list = map { $_ } keys(%{$self->{Data}});
-    return \@list;
-  }
 }
 
 1;
