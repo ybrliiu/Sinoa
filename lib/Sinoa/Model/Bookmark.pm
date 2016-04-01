@@ -7,6 +7,7 @@ package Sinoa::Model::Bookmark {
   use Sinoa::Record::Bookmark;
   use Sinoa::Record::Folder;
   use Time::Piece; # 時刻
+  use Encode 'decode';
   
   sub new {
     my $class = shift;
@@ -33,14 +34,15 @@ package Sinoa::Model::Bookmark {
     my $pkg = "Sinoa::Record::$mode";
     my $obj = $pkg->new($data);
     my $rec = $self->{Record}->open(1);
-    my $last_dir = _select_dir($rec->get_alldata(),$dirs);
+    my $last_dir = _select_dir($rec->get_alldata(), $dirs);
     $last_dir->{$obj->Name} = $obj;
     $rec->close();
   }
   
+  # 今の時刻
   sub _now {
     my $t = localtime();
-    return $t->year.'/'.$t->mon.'/'.$t->mday.' '.$t->hour.':'.$t->min.':'.$t->sec;
+    return decode('utf-8', $t->strftime('%Y/%m/%d(%a) %H:%M:%S'));
   }
   
   # ブックマーク作成
@@ -76,7 +78,7 @@ package Sinoa::Model::Bookmark {
   
   # フォルダ、ブックマークデータ編集,場所変更
   sub edit {
-    my ($self,$name,$data,$folders) = @_;
+    my ($self, $name, $data, $folders) = @_;
     
     # 内容の書き換え
     my $rec = $self->{Record}->open(1);
@@ -144,7 +146,7 @@ package Sinoa::Model::Bookmark {
     # 表示するブックマークを抽出
     my @bookmark = map {
       $tmp[$_] ? $tmp[$_] : ()
-    } $page{current} * $page{switch}..$page{current} * $page{switch} + $page{switch} - 1;
+    } $page{current} * $page{switch} .. $page{current} * $page{switch} + $page{switch} - 1;
     
     $page{limit} = int(@tmp / $option->{switch} + 0.99); # 数が大きすぎるとバグる  
     return \@bookmark,\%page;
@@ -155,7 +157,7 @@ package Sinoa::Model::Bookmark {
     my ($bookmark,$option) = @_;
     my @result = do {
       if ($option->{mode} eq 'tag') { __tag($bookmark, $option) }
-      elsif ($option->{mode} eq 'time') { __time($bookmark, $option) }
+      elsif ($option->{mode} eq 'time') { __time($bookmark) }
       elsif ($option->{mode} eq 'find') { __like($bookmark, $option, 'Name') }
       elsif ($option->{mode} eq 'url') { __like($bookmark, $option, 'URL') }
       else { __nomal( _select_dir($bookmark, $option->{folder}) ) }
@@ -164,35 +166,39 @@ package Sinoa::Model::Bookmark {
   }
   
   # タグ
-  sub __tag{
-    my ($bookmark,$option) = @_;
+  sub __tag {
+    my ($bookmark, $option) = @_;
     map {
       if( _is_class($bookmark->{$_}) ){
         # bookmark obj
         $option->{'keyword'} eq $bookmark->{$_}->Tag ? $bookmark->{$_} : ();
       }else{
         # folder obj
-        __tag($bookmark->{$_}->Include,$option);
+        __tag($bookmark->{$_}->Include, $option);
       }
     } sort(keys %$bookmark);
   }
   
   # 時間順
-  sub __time{
-    my ($bookmark,$option) = @_;
-    map {
-      _is_class($bookmark->{$_}) ? $bookmark->{$_} : __time($bookmark->{$_}->Include,$option);
-    } sort { $bookmark->{$a}->Time <=> $bookmark->{$b}->Time }(keys %$bookmark);
+  sub __time {
+    my $bookmark = shift;
+    sort { $a->Time <=> $b->Time } ___all_bookmark($bookmark);
+  }
+  
+  # 全てのブックマークリストを取得
+  sub ___all_bookmark {
+    my $bookmark = shift;
+    map { _is_class($bookmark->{$_}) ? $bookmark->{$_} : ___all_bookmark($bookmark->{$_}->Include) } keys %$bookmark;
   }
   
   # URL,名前からの検索モード
   sub __like {
-    my ($bookmark,$option,$mode) = @_;
+    my ($bookmark, $option, $mode) = @_;
     map {
       if( _is_class($bookmark->{$_}) ){
         $bookmark->{$_}->$mode =~ /$option->{'keyword'}/ ? $bookmark->{$_} : ();
       }else{
-        __like($bookmark->{$_}->Include,$option,$mode);
+        __like($bookmark->{$_}->Include, $option, $mode);
       }
     } sort(keys %$bookmark);
   }
