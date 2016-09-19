@@ -5,7 +5,6 @@ use utf8;
 use Test::More;
 
 $ENV{MOJO_MODE} = 'test';
-$ENV{SINOA_DEPTH} = 1; # ディレクトリの深さ
 
 my $class;
 

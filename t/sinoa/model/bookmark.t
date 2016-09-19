@@ -6,7 +6,6 @@ use Test::More;
 use Data::Dumper;
 
 $ENV{MOJO_MODE} = 'test';
-$ENV{SINOA_DEPTH} = 2; # ディレクトリの深さ /t = 0,/t/sinoa = 1,/t/sinoa/model = 2
 
 my $class;
 my $obj;

@@ -27,11 +27,7 @@ package Sinoa {
     return $project_dir if $project_dir;
     my $home = Mojo::Home->new;
     $home->detect(ref $class);
-    my $depth = '../';
-    if($ENV{MOJO_MODE} eq 'test' && $ENV{SINOA_DEPTH} > 0){
-      $depth .= '../' for 1..$ENV{SINOA_DEPTH};
-    }
-    $project_dir = $home->rel_dir($depth);
+    $project_dir = $home->rel_dir('/');
     return $project_dir;
   }
 
