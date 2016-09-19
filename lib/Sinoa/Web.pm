@@ -8,9 +8,10 @@ package Sinoa::Web {
   # サーバー起動時に一度だけ呼び出す
   sub startup {
     my $self = shift;
-        
+
     # 設定ファイル読み込み
-    $self->plugin('Config',{file => Sinoa->root_dir.'/etc/config/site.conf'});
+    $self->plugin('Config', {file => Sinoa->root_dir . "/etc/config/$_.conf"}) for qw/site hypnotoad plugin/;
+    $self->plugin('ProxyPassReverse::SubDir');
     
     # フォーム検証の拡張(正規表現にマッチしない)
     $self->validator->add_check(not_like => sub { $_[2] =~ $_[3] });

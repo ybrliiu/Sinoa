@@ -1,0 +1,6 @@
+# Bookmark data
+etc/record/bookmark.dat
+
+# log
+log/*
+!.gitkeep
